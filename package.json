@@ -1,0 +1,31 @@
+{
+  "name": "counciltrack-rewrite",
+  "version": "1.0.0",
+  "description": "A full rewrite of the original php-based CouncilTrack",
+  "main": "src/main.ts",
+  "scripts": {
+    "build": "tsc",
+    "run": "node ./dist/main.js",
+    "compile": "tsc && node ./dist/main.js & PAUSE"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Synthhex/council-track-js.git"
+  },
+  "author": "Synthhex",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Synthhex/council-track-js/issues"
+  },
+  "homepage": "https://github.com/Synthhex/council-track-js#readme",
+  "dependencies": {
+    "@types/bcrypt": "^3.0.0",
+    "@types/express": "^4.17.11",
+    "@types/mysql": "^2.15.17",
+    "@types/node": "^14.14.25",
+    "bcrypt": "^5.0.0",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "typescript": "^4.1.4"
+  }
+}

@@ -1,0 +1,10 @@
+{
+    "port": 1235,
+    "sql": {
+        "host": "localhost",
+        "user": "root",
+        "password": "",
+        "database": "council",
+        "port": 3307
+    }
+}

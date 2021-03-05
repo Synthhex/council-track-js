@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <title>CouncilTrack</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+        <style>
+            .footer #hidden {
+                visibility: hidden;
+                position: absolute;
+            }
+            .footer:hover #hidden {
+                visibility: visible;
+                width: 20%;
+            }
+
+        </style>
+    </head>
+    <body>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    
+        <div class="main">
+            <div class="row" style="margin-top: 10%;">
+                <div class="col-sm-4"></div>
+
+                <div class="col-sm-4 justify-content-center">
+                    <div class="jumbotron text-center alert alert-muted text-dark">
+                        <h1>CouncilTrack <b>v2</b></h1>
+                    </div>
+
+                    <form id="login" class="form-ct" method="POST" action="/login">
+                        <div class="input-group mb-3" style="width: 80%;">
+                            <input id="email" type="text" class="form-control" placeholder="Email">
+                            <div class="input-group-append">
+                                <span class="input-group-text">@acsbg.org</span>
+                            </div>
+                            <input id="password" type="password" class="form-control" placeholder="Password">
+                        </div>
+                        <button id="submit" class="btn btn-lg btn-primary btn-block btn-final" type="submit"> Sign in</button>
+                    </form>
+                
+                    <a id="status" style="color: red;"></a>
+
+                    <hr style="height: 4px; border: none; color: black; background-color: black;">
+                    
+
+                    <div class="footer" style="text-align: right; font-size: small;">
+                        <span id="hidden">PHP is dead. Long live JavaScript.</span>
+                        <h5>Created by:</h5>
+                        <p on>
+                            Original model: Boris Radulov and Ognian Trajanov Jr. <a href="https://github.com/BobbyRaduloff/CouncilTrack" target="_blank">GitHub (redir.)</a><br>
+                            Rewritten: V <a href="https://github.com/Synthhex/council-track-js" target="_blank">GitHub (redir.)</a>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-sm-4"></div>
+            </div>
+        </div>
+
+        <script>
+            $(`#login`).on('submit', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: '/login',
+                    type: 'POST',
+                    data: JSON.stringify({
+                        email: document.getElementById('email').value + "@acsbg.org", 
+                        password: document.getElementById('password').value // acs.bg has an SSL certificate, so this is fine. Hashing it would not make a difference since it is being hashed automatically.
+                    }),
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    success: (msg, status) => {
+                        switch (status) {
+                                case 'success':
+                                    console.log(msg);
+                                    if(msg.response === "USER_NOT_FOUND") document.getElementById('status').text = "Incorrect username.";
+                                    if(msg.response === "INCORRECT_PASSWORD") document.getElementById('status').text = "Incorrect password.";
+                                    if(msg.response === "LOGIN_SUCCESSFUL") {
+                                        document.getElementById('status').text = "";
+                                        window.sessionStorage.setItem("sesh_token", msg.sesh_token);
+                                        window.location.replace(window.location.href + "/main");
+                                    }
+                                    if(msg.response === "BAD_REQUEST") document.getElementById('status').text = "No username/password supplied.";
+                                    return;
+                                case 500:
+                                    document.getElementById('status').text = "Internal server error. Your query could not be completed.";
+                                    return;
+                        }
+                    }
+                });
+            });
+                
+        </script>
+    </body>
+</html>
