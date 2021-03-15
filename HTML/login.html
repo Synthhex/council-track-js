@@ -73,18 +73,22 @@
                     success: (msg, status) => {
                         switch (status) {
                                 case 'success':
-                                    console.log(msg);
-                                    if(msg.response === "USER_NOT_FOUND") document.getElementById('status').text = "Incorrect username.";
-                                    if(msg.response === "INCORRECT_PASSWORD") document.getElementById('status').text = "Incorrect password.";
-                                    if(msg.response === "LOGIN_SUCCESSFUL") {
-                                        document.getElementById('status').text = "";
-                                        window.sessionStorage.setItem("sesh_token", msg.sesh_token);
-                                        window.location.replace(window.location.href + "/main");
+                                    switch (msg.code) {
+                                        case -1:
+                                        case 0:
+                                        case 1: 
+                                        case 2:
+                                            document.getElementById('status').text = msg.response;
+                                            break;
+                                        case 3: 
+                                            document.getElementById('status').text = "";
+                                            window.sessionStorage.setItem("sesh_token", msg.sesh_token);
+                                            window.location.replace(window.location.href + "/main");
+                                            break;
                                     }
-                                    if(msg.response === "BAD_REQUEST") document.getElementById('status').text = "No username/password supplied.";
                                     return;
                                 case 500:
-                                    document.getElementById('status').text = "Internal server error. Your query could not be completed.";
+                                    document.getElementById('status').text = msg.response;
                                     return;
                         }
                     }
