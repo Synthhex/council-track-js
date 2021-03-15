@@ -18,20 +18,47 @@ export class DatabaseHandler {
         });
     }
     
-    generalQuery(query: string, params: Array<any>) {
-        return new Promise<Array<any> | MySQL.OkPacket>(async (resolve, reject) => {
+    select(query: string, params: Array<any>) {
+        return new Promise<Array<any>>(async (resolve, reject) => {
             this.sql.getConnection((err, connection) => {
                 if(err) {
                     reject(err);
                     return;
                 }
                 connection.query(query, params, (err: MySQL.MysqlError, data: Array<any>) => {
+                    connection.release();
                     if(err) {
                         connection.release();
                         reject(err);
                         return;
                     }             
+                    if(!Array.isArray(data)) {
+                        reject(new Error("Select function returned OkPacket."));
+                        return;
+                    }
+                    resolve(data);
+                    return;
+                });
+            });
+        });
+    }
+    insert(query: string, params: Array<any>) {
+        return new Promise<MySQL.OkPacket>(async (resolve, reject) => {
+            this.sql.getConnection((err, connection) => {
+                if(err) {
+                    reject(err);
+                    return;
+                }
+                connection.query(query, params, (err: MySQL.MysqlError, data: Array<any>) => {
                     connection.release();
+                    if(err) {
+                        reject(err);
+                        return;
+                    }        
+                    if(Array.isArray(data)) {
+                        reject(new Error("Insert function returned RowDataPackets."));
+                        return;
+                    }   
                     resolve(data);
                     return;
                 });
@@ -61,7 +88,7 @@ export class DatabaseHandler {
 
             let user;
             try {
-                user = await this.generalQuery(query, [email.toString()]);
+                user = await this.select(query, [email.toString()]);
             }catch(err) {
                 console.log(err);
                 result.code = 500;
